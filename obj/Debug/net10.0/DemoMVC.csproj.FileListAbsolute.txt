@@ -95,3 +95,4 @@ G:\PTPMQL\DemoMVC\obj\Debug\net10.0\refint\DemoMVC.dll
 G:\PTPMQL\DemoMVC\obj\Debug\net10.0\DemoMVC.pdb
 G:\PTPMQL\DemoMVC\obj\Debug\net10.0\DemoMVC.genruntimeconfig.cache
 G:\PTPMQL\DemoMVC\obj\Debug\net10.0\ref\DemoMVC.dll
+G:\PTPMQL\DemoMVC\obj\Debug\net10.0\DemoMVC.sourcelink.json

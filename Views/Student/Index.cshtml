@@ -1,0 +1,12 @@
+@model DemoMVC.Models.Student
+
+<h2>Nhập Học Sinh</h2>
+
+<form asp-action="Create" method="post"> 
+        <input type = "text" name = "FullName" placeholder = "Nhập Họ và Tên" />
+        <input type = "text" name = "Address" placeholder = "Nhập Địa Chỉ" />
+        <input type = "text" name = "University" placeholder = "Nhập Trường đại học" />
+
+        <input type="submit" value = "Lưu thông tin" />
+</form>
+<h2> @ViewData[index:"Data"]</h2>
