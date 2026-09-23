@@ -12,5 +12,7 @@ namespace DemoMVC.Models
         public string? Address { get; set; }
 
         public string? University { get; set; }
+
+        public string? Email { get; set; }
     }
 }
