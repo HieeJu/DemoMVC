@@ -1,34 +1,43 @@
 @model IEnumerable<DemoMVC.Models.Student>
 
-<h2>Danh sách học sinh</h2>
+<h2>Danh Sách Sinh Viên</h2>
 
-@if (TempData["Data"] != null)
+@if (TempData["Message"] != null)
 {
-    <h3 style="color: green;">@TempData["Data"]</h3>
+    <div class="alert alert-success">@TempData["Message"]</div>
 }
 
-<table class="table">
+<p>
+    <a asp-action="Create" class="btn btn-primary">Thêm Sinh Viên Mới</a>
+</p>
+
+<table class="table table-striped table-bordered">
     <thead>
         <tr>
-            <th>Họ và tên</th>
-            <th>Địa chỉ</th>
-            <th>Trường đại học</th>
-            <th>Email</th> 
+            <th>@Html.DisplayNameFor(model => model.StudentId)</th>
+            <th>@Html.DisplayNameFor(model => model.FullName)</th>
+            <th>@Html.DisplayNameFor(model => model.Address)</th>
+            <th>@Html.DisplayNameFor(model => model.University)</th>
+            <th>@Html.DisplayNameFor(model => model.Email)</th>
             <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>@item.FullName</td>
-            <td>@item.Address</td>
-            <td>@item.University</td>
-            <td>@item.Email</td> 
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Sửa</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Xóa</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.StudentId)</td>
+                <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                <td>@Html.DisplayFor(modelItem => item.Address)</td>
+                <td>@Html.DisplayFor(modelItem => item.University)</td>
+                <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                <td>
+                    <!-- Tương đương link /Student/Edit/MSV001 -->
+                    <a asp-action="Edit" asp-route-id="@item.StudentId" class="btn btn-sm btn-warning">Sửa</a>
+                    <!-- Tương đương link /Student/Delete/MSV001 -->
+                    <a asp-action="Delete" asp-route-id="@item.StudentId" class="btn btn-sm btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
