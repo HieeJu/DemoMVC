@@ -15,7 +15,11 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    DemoMVC.Data.DbSeeder.SeedFaculties(context);
+}
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

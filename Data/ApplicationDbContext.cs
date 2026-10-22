@@ -11,5 +11,6 @@ namespace DemoMVC.Data
 
         // Khai báo các DbSet tương ứng với các bảng trong CSDL
         public DbSet<Student> Students { get; set; }
+        public DbSet<Faculty> Faculties { get; set; }
     }
 }
