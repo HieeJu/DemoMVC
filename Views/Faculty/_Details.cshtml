@@ -1,0 +1,12 @@
+@model DemoMVC.Models.Faculty
+<div class="modal-header">
+    <h5 class="modal-title">Chi tiết khoa</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+</div>
+<div class="modal-body">
+    <dl class="row">
+        <dt class="col-sm-4">Mã khoa</dt><dd class="col-sm-8">@Model.FacultyId</dd>
+        <dt class="col-sm-4">Tên khoa</dt><dd class="col-sm-8">@Model.FacultyName</dd>
+        <dt class="col-sm-4">Mã ngành</dt><dd class="col-sm-8">@Model.MajorCode</dd>
+    </dl>
+</div>

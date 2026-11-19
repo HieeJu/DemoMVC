@@ -1,0 +1,33 @@
+@model DemoMVC.Models.Faculty
+@{
+    var isEdit = !string.IsNullOrEmpty(Model.FacultyId);
+}
+<form asp-action="@(isEdit ? "Edit" : "Create")" asp-route-id="@Model.FacultyId" method="post">
+    <div class="modal-header">
+        <h5 class="modal-title">@(isEdit ? "Sửa khoa" : "Thêm khoa")</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+    </div>
+    <div class="modal-body">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="mb-3">
+            <label asp-for="FacultyId" class="form-label"></label>
+            <input asp-for="FacultyId" class="form-control" readonly="@(isEdit ? "readonly" : null)" />
+            <span asp-validation-for="FacultyId" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="FacultyName" class="form-label"></label>
+            <input asp-for="FacultyName" class="form-control" />
+            <span asp-validation-for="FacultyName" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="MajorCode" class="form-label"></label>
+            <input asp-for="MajorCode" class="form-control" />
+            <span asp-validation-for="MajorCode" class="text-danger"></span>
+        </div>
+        @Html.AntiForgeryToken()
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        <button type="submit" class="btn btn-primary">Lưu</button>
+    </div>
+</form>

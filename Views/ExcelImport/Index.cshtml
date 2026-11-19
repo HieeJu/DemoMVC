@@ -1,0 +1,93 @@
+@model DemoMVC.Models.ExcelImportViewModel
+@{
+    ViewData["Title"] = "Nhập dữ liệu Excel";
+}
+<h1>Nhập dữ liệu Excel</h1>
+<p>Chỉ Student và Faculty được hỗ trợ; các bảng Identity không thể chọn hoặc nhập.</p>
+
+@if (Model.Errors.Count > 0)
+{
+    <div class="alert alert-danger">
+        <ul class="mb-0">@foreach (var error in Model.Errors) { <li>@error</li> }</ul>
+    </div>
+}
+
+<form asp-action="Preview" method="post" enctype="multipart/form-data" class="card card-body mb-4">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label class="form-label" for="entityName">Bảng dữ liệu</label>
+        <select class="form-select" id="entityName" name="entityName" required>
+            <option value="">-- Chọn bảng --</option>
+            <option value="Students" selected="@(Model.EntityName == "Students")">Student</option>
+            <option value="Faculties" selected="@(Model.EntityName == "Faculties")">Faculty</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="file">Tệp Excel (.xlsx hoặc .xls)</label>
+        <input class="form-control" type="file" id="file" name="file" accept=".xlsx,.xls" required />
+    </div>
+    <button class="btn btn-primary" type="submit">Xem trước và kiểm tra</button>
+</form>
+
+@if (Model.TotalRows > 0)
+{
+    <section class="card card-body mb-4">
+        <h2 class="h4">Bản xem trước: @Model.EntityName</h2>
+        <p>Tổng dòng: @Model.TotalRows | Hợp lệ: @Model.ValidRows | Lỗi: @Model.InvalidRows</p>
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead><tr><th>Dòng</th><th>Khóa</th><th>Kiểm tra</th></tr></thead>
+                <tbody>
+                    @foreach (var row in Model.Rows)
+                    {
+                        <tr>
+                            <td>@row.RowNumber</td><td>@row.Summary</td>
+                            <td>@(row.Errors.Count == 0 ? "Hợp lệ" : string.Join("; ", row.Errors))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (Model.TotalRows > Model.Rows.Count)
+        {
+            <p>Hiển thị @Model.Rows.Count dòng đầu tiên; hệ thống đã kiểm tra đủ @Model.TotalRows dòng.</p>
+        }
+        <form asp-action="Execute" method="post" id="confirmImportForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="previewToken" value="@Model.PreviewToken" />
+            <fieldset class="mb-3">
+                <legend class="h6">Chọn và xác nhận chế độ nhập</legend>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="mode" id="modeAppend" value="Append" required />
+                    <label class="form-check-label" for="modeAppend"><strong>Append</strong> — chỉ thêm dòng mới; dòng có khóa trùng sẽ bị bỏ qua và báo lỗi.</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="mode" id="modeOverwrite" value="Overwrite" required />
+                    <label class="form-check-label" for="modeOverwrite"><strong>Overwrite</strong> — thay toàn bộ dữ liệu của bảng đã chọn; yêu cầu mọi dòng hợp lệ.</label>
+                </div>
+            </fieldset>
+            <button type="submit" class="btn btn-danger">Xác nhận và nhập</button>
+        </form>
+    </section>
+}
+
+@if (Model.Result is not null)
+{
+    <section class="alert @(Model.Result.ErrorRows == 0 ? "alert-success" : "alert-warning")">
+        <h2 class="h5">@Model.Result.Message</h2>
+        <p>Tổng dòng: @Model.Result.TotalRows | Thành công: @Model.Result.SuccessRows | Lỗi: @Model.Result.ErrorRows</p>
+        @if (Model.Result.Errors.Count > 0)
+        {
+            <ul>@foreach (var error in Model.Result.Errors) { <li>@error</li> }</ul>
+        }
+    </section>
+}
+
+@section Scripts {
+    <script>
+        document.getElementById("confirmImportForm")?.addEventListener("submit", event => {
+            const mode = new FormData(event.currentTarget).get("mode");
+            if (!window.confirm(`Xác nhận ${mode} dữ liệu cho toàn bộ bảng đã chọn?`)) event.preventDefault();
+        });
+    </script>
+}

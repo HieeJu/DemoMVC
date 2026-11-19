@@ -22,10 +22,26 @@ namespace DemoMVC.Controllers
         public async Task<IActionResult> Index()
         {
             var students = await _context.Students
-                .Include(s => s.Faculty) // JOIN bảng Faculty để lấy tên Khoa[cite: 3]
+                .Include(s => s.Faculty)
                 .ToListAsync();
 
             return View(students);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Rows()
+        {
+            var students = await _context.Students.Include(student => student.Faculty).ToListAsync();
+            return PartialView("_Rows", students);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(string id)
+        {
+            var student = await _context.Students.Include(item => item.Faculty)
+                .FirstOrDefaultAsync(item => item.StudentId == id);
+            if (student is null) return NotFound();
+            return IsAjaxRequest() ? PartialView("_Details", student) : View(student);
         }
 
         // ==========================================
@@ -34,9 +50,8 @@ namespace DemoMVC.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            // Nạp danh sách Khoa của HUMG vào SelectList cho thẻ <select>[cite: 3]
             ViewData["FacultyId"] = new SelectList(_context.Faculties, "FacultyId", "FacultyName");
-            return View();
+            return IsAjaxRequest() ? PartialView("_Form", new Student()) : View();
         }
 
         // ==========================================
@@ -46,39 +61,37 @@ namespace DemoMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("FullName,Address,Email,FacultyId")] Student std, string yearPrefix = "28", string systemPrefix = "21")
         {
-            // Tìm thông tin Khoa mà người dùng đã chọn ở Form[cite: 3]
             var faculty = await _context.Faculties.FindAsync(std.FacultyId);
+            if (faculty is null)
+            {
+                ModelState.AddModelError(nameof(std.FacultyId), "Khoa được chọn không tồn tại.");
+                return await CreateInvalidAsync(std);
+            }
 
-            // Lấy mã số Ngành/Khoa (MajorCode) tương ứng (Mặc định "01" nếu không tìm thấy)[cite: 3]
-            string majorPrefix = faculty?.MajorCode ?? "01";
-
-            // Tạo Tiền tố: [Năm 2 chữ số] + [Hệ 2 chữ số] + [Mã Ngành 2 chữ số] (VD: 28 + 21 + 05 -> "282105")[cite: 3]
+            string majorPrefix = faculty.MajorCode;
             string prefix = $"{yearPrefix}{systemPrefix}{majorPrefix}";
 
-            // Lấy Mã sinh viên lớn nhất hiện tại thuộc tiền tố này[cite: 3]
             var maxStudentId = await _context.Students
                 .Where(s => s.StudentId.StartsWith(prefix))
                 .OrderByDescending(s => s.StudentId)
                 .Select(s => s.StudentId)
                 .FirstOrDefaultAsync();
 
-            // Sinh mã sinh viên tự động kế tiếp (VD: 2821050001)
-            std.StudentId = StringProcess.GenerateStudentId(prefix, maxStudentId);
-
-            // Bỏ qua kiểm tra Validate cho StudentId vì được sinh tự động
+            std.StudentId = StringProcess.GenerateStudentId(prefix, maxStudentId ?? string.Empty);
             ModelState.Remove("StudentId");
 
             if (ModelState.IsValid)
             {
                 _context.Add(std);
                 await _context.SaveChangesAsync();
-                TempData["Message"] = $"Thêm mới thành công sinh viên {std.FullName} - Mã SV: {std.StudentId}";
+                if (IsAjaxRequest())
+                {
+                    return Json(new { success = true, message = $"Đã thêm sinh viên {std.FullName} ({std.StudentId})." });
+                }
                 return RedirectToAction(nameof(Index));
             }
 
-            // Nếu dữ liệu không hợp lệ, nạp lại danh sách Khoa cho Dropdown
-            ViewData["FacultyId"] = new SelectList(_context.Faculties, "FacultyId", "FacultyName", std.FacultyId);
-            return View(std);
+            return await CreateInvalidAsync(std);
         }
 
         // ==========================================
@@ -92,9 +105,8 @@ namespace DemoMVC.Controllers
             var student = await _context.Students.FindAsync(id);
             if (student == null) return NotFound();
 
-            // Chọn sẵn Khoa hiện tại của sinh viên trong Dropdown[cite: 3]
             ViewData["FacultyId"] = new SelectList(_context.Faculties, "FacultyId", "FacultyName", student.FacultyId);
-            return View(student);
+            return IsAjaxRequest() ? PartialView("_Form", student) : View(student);
         }
 
         // ==========================================
@@ -106,11 +118,22 @@ namespace DemoMVC.Controllers
         {
             if (id != std.StudentId) return NotFound();
 
+            var facultyExists = await _context.Faculties.AnyAsync(faculty => faculty.FacultyId == std.FacultyId);
+            if (!facultyExists)
+            {
+                ModelState.AddModelError(nameof(std.FacultyId), "Khoa được chọn không tồn tại.");
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(std);
+                    var student = await _context.Students.FindAsync(id);
+                    if (student is null) return NotFound();
+                    student.FullName = std.FullName;
+                    student.Address = std.Address;
+                    student.Email = std.Email;
+                    student.FacultyId = std.FacultyId;
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -118,11 +141,15 @@ namespace DemoMVC.Controllers
                     if (!_context.Students.Any(e => e.StudentId == std.StudentId)) return NotFound();
                     else throw;
                 }
+                if (IsAjaxRequest())
+                {
+                    return Json(new { success = true, message = $"Đã cập nhật sinh viên {std.FullName}." });
+                }
                 return RedirectToAction(nameof(Index));
             }
 
             ViewData["FacultyId"] = new SelectList(_context.Faculties, "FacultyId", "FacultyName", std.FacultyId);
-            return View(std);
+            return IsAjaxRequest() ? InvalidPartial("_Form", std) : View(std);
         }
 
         // ==========================================
@@ -133,14 +160,13 @@ namespace DemoMVC.Controllers
         {
             if (string.IsNullOrEmpty(id)) return NotFound();
 
-            // Load dữ liệu sinh viên kèm tên Khoa để hiển thị trang xác nhận xóa
             var student = await _context.Students
                 .Include(s => s.Faculty)
                 .FirstOrDefaultAsync(m => m.StudentId == id);
 
             if (student == null) return NotFound();
 
-            return View(student);
+            return IsAjaxRequest() ? PartialView("_Delete", student) : View(student);
         }
 
         // ==========================================
@@ -156,7 +182,27 @@ namespace DemoMVC.Controllers
                 _context.Students.Remove(student);
                 await _context.SaveChangesAsync();
             }
+            if (IsAjaxRequest())
+            {
+                return Json(new { success = true, message = "Đã xóa sinh viên." });
+            }
             return RedirectToAction(nameof(Index));
         }
+
+        private async Task<IActionResult> CreateInvalidAsync(Student student)
+        {
+            ViewData["FacultyId"] = new SelectList(
+                await _context.Faculties.ToListAsync(), "FacultyId", "FacultyName", student.FacultyId);
+            return IsAjaxRequest() ? InvalidPartial("_Form", student) : View(student);
+        }
+
+        private IActionResult InvalidPartial(string viewName, Student student)
+        {
+            Response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+            return PartialView(viewName, student);
+        }
+
+        private bool IsAjaxRequest() =>
+            string.Equals(Request.Headers["X-Requested-With"], "XMLHttpRequest", StringComparison.OrdinalIgnoreCase);
     }
 }

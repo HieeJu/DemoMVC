@@ -1,0 +1,17 @@
+@model IEnumerable<DemoMVC.Models.Faculty>
+@{
+    ViewData["Title"] = "Quản lý khoa";
+}
+<h1>Quản lý khoa</h1>
+<div id="crudMessage" class="alert d-none" role="status"></div>
+<p><button type="button" class="btn btn-primary" id="btnCreate" data-url="@Url.Action("Create")">Thêm khoa</button></p>
+<table class="table table-striped" id="facultyTable" data-rows-url="@Url.Action("Rows")">
+    <thead><tr><th>Mã khoa</th><th>Tên khoa</th><th>Mã ngành</th><th>Thao tác</th></tr></thead>
+    <tbody><partial name="_Rows" model="Model" /></tbody>
+</table>
+<div class="modal fade" id="genericModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog"><div class="modal-content" id="modalContent"></div></div>
+</div>
+@section Scripts {
+    <script src="~/js/crud-modal.js"></script>
+}

@@ -1,0 +1,23 @@
+@model DemoMVC.Models.UserRoleEditViewModel
+<form asp-action="Edit" method="post">
+    <div class="modal-header">
+        <h5 class="modal-title">Gán Role cho @Model.Email</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+    </div>
+    <div class="modal-body">
+        <input asp-for="UserId" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @foreach (var role in Model.Roles)
+        {
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="SelectedRoleIds" value="@role.Id" checked="@role.Selected" id="role_@role.Id" />
+                <label class="form-check-label" for="role_@role.Id">@role.Name @(role.Name == "Admin" ? "(quản trị toàn hệ thống)" : "")</label>
+            </div>
+        }
+        @Html.AntiForgeryToken()
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        <button type="submit" class="btn btn-primary">Lưu</button>
+    </div>
+</form>

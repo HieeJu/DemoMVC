@@ -1,0 +1,12 @@
+@model IEnumerable<DemoMVC.Models.Faculty>
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@item.FacultyId</td><td>@item.FacultyName</td><td>@item.MajorCode</td>
+        <td>
+            <button type="button" class="btn btn-sm btn-info btn-detail" data-url="@Url.Action("Details", new { id = item.FacultyId })">Xem</button>
+            <button type="button" class="btn btn-sm btn-warning btn-edit" data-url="@Url.Action("Edit", new { id = item.FacultyId })">Sửa</button>
+            <button type="button" class="btn btn-sm btn-danger btn-delete" data-url="@Url.Action("Delete", new { id = item.FacultyId })">Xóa</button>
+        </td>
+    </tr>
+}

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,6 +26,31 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Student" asp-action="Index">Sinh viên</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Faculty" asp-action="Index">Khoa</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Role" asp-action="Index">Role</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="UserRole" asp-action="Index">Gán Role</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="Permission" asp-action="Index">Phân quyền</a></li>
+                            <li class="nav-item"><a class="nav-link text-dark" asp-controller="ExcelImport" asp-action="Index">Nhập Excel</a></li>
+                        }
+                    </ul>
+                    <ul class="navbar-nav">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item"><span class="nav-link">@User.Identity.Name</span></li>
+                            <li class="nav-item">
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    <button type="submit" class="nav-link btn btn-link">Đăng xuất</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Login">Đăng nhập</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Account" asp-action="Register">Đăng ký</a></li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -43,6 +68,8 @@
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

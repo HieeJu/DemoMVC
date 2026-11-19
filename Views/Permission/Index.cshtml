@@ -1,0 +1,54 @@
+@model DemoMVC.Models.PermissionMatrixViewModel
+@{
+    ViewData["Title"] = "Phân quyền theo Action";
+}
+<h1>Phân quyền theo Controller/Action</h1>
+<p>Role Admin luôn có toàn quyền. Action công khai của luồng xác thực không bị giới hạn bởi ma trận.</p>
+<div id="crudMessage" class="alert d-none" role="status"></div>
+<form asp-action="Save" method="post" data-ajax-form="true" data-refresh="false">
+    @Html.AntiForgeryToken()
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>Controller</th><th>Action</th>
+                    @foreach (var role in Model.Roles)
+                    {
+                        <th>@role.Name</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var action in Model.Actions)
+                {
+                    <tr>
+                        <td>@action.Controller</td><td>@action.Action</td>
+                        @foreach (var role in Model.Roles)
+                        {
+                            <td>
+                                @if (role.Name == "Admin")
+                                {
+                                    <span>Toàn quyền</span>
+                                }
+                                else if (action.IsPublic)
+                                {
+                                    <span>Công khai</span>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" name="GrantKeys" value="@($"{role.Id}|{action.Id}")"
+                                           checked="@action.GrantedRoleIds.Contains(role.Id)"
+                                           aria-label="@($"{role.Name}: {action.DisplayName}")" />
+                                }
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <button type="submit" class="btn btn-primary">Lưu phân quyền</button>
+</form>
+@section Scripts {
+    <script src="~/js/crud-modal.js"></script>
+}

@@ -1,0 +1,16 @@
+@model DemoMVC.Models.Student
+<form asp-action="Delete" method="post">
+    <div class="modal-header">
+        <h5 class="modal-title">Xóa sinh viên</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+    </div>
+    <div class="modal-body">
+        <p>Bạn có chắc muốn xóa sinh viên <strong>@Model.FullName</strong> (@Model.StudentId)?</p>
+        <input type="hidden" name="id" value="@Model.StudentId" />
+        @Html.AntiForgeryToken()
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="submit" class="btn btn-danger">Xóa</button>
+    </div>
+</form>

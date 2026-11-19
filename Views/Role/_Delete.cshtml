@@ -1,0 +1,16 @@
+@model DemoMVC.Models.ApplicationRole
+<form asp-action="DeleteConfirmed" method="post">
+    <div class="modal-header">
+        <h5 class="modal-title">Xóa Role</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+    </div>
+    <div class="modal-body">
+        <p>Xác nhận xóa Role <strong>@Model.Name</strong>? Role đang được gán cho User sẽ không thể xóa.</p>
+        <input type="hidden" name="id" value="@Model.Id" />
+        @Html.AntiForgeryToken()
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="submit" class="btn btn-danger">Xóa</button>
+    </div>
+</form>

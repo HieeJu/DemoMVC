@@ -1,0 +1,15 @@
+@model IEnumerable<DemoMVC.Models.ApplicationRole>
+@foreach (var role in Model)
+{
+    <tr>
+        <td>@role.Name</td>
+        <td>@(role.IsSystemRole ? "Hệ thống" : "Tùy chỉnh")</td>
+        <td>
+            @if (!role.IsSystemRole)
+            {
+                <button type="button" class="btn btn-sm btn-warning btn-edit" data-url="@Url.Action("Edit", new { id = role.Id })">Sửa</button>
+                <button type="button" class="btn btn-sm btn-danger btn-delete" data-url="@Url.Action("Delete", new { id = role.Id })">Xóa</button>
+            }
+        </td>
+    </tr>
+}

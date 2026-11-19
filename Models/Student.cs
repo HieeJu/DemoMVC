@@ -6,6 +6,7 @@ namespace DemoMVC.Models
     public class Student
     {
         [Key]
+        [Required(ErrorMessage = "Mã sinh viên không được để trống")]
         [Display(Name = "Mã sinh viên")]
         public string StudentId { get; set; } = string.Empty; // Mã tự động sinh ra
 

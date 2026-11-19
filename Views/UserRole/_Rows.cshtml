@@ -1,0 +1,8 @@
+@model DemoMVC.Models.UserRoleListViewModel
+@foreach (var user in Model.Users)
+{
+    <tr>
+        <td>@user.Email</td><td>@user.Roles</td>
+        <td><button type="button" class="btn btn-sm btn-warning btn-edit" data-url="@Url.Action("Edit", new { id = user.UserId })">Quản lý Role</button></td>
+    </tr>
+}

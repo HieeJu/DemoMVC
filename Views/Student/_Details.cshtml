@@ -1,0 +1,14 @@
+@model DemoMVC.Models.Student
+<div class="modal-header">
+    <h5 class="modal-title">Chi tiết sinh viên</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+</div>
+<div class="modal-body">
+    <dl class="row">
+        <dt class="col-sm-4">Mã sinh viên</dt><dd class="col-sm-8">@Model.StudentId</dd>
+        <dt class="col-sm-4">Họ tên</dt><dd class="col-sm-8">@Model.FullName</dd>
+        <dt class="col-sm-4">Khoa</dt><dd class="col-sm-8">@Model.Faculty?.FacultyName</dd>
+        <dt class="col-sm-4">Địa chỉ</dt><dd class="col-sm-8">@Model.Address</dd>
+        <dt class="col-sm-4">Email</dt><dd class="col-sm-8">@Model.Email</dd>
+    </dl>
+</div>
