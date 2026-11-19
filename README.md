@@ -35,3 +35,5 @@ Preview kiểm tra cấu trúc, validation, khóa trùng trong file và quan h�
 dotnet build DemoMVC.csproj
 dotnet test DemoMVC.csproj
 ```
+
+Hiện solution chỉ có project ứng dụng `DemoMVC.csproj`, chưa có test project; vì vậy `dotnet test` chưa chạy test tự động.

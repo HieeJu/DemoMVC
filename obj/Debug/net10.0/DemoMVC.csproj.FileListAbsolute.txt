@@ -230,3 +230,8 @@ G:\PTPMQL\DemoMVC\bin\Debug\net10.0\runtimes\win-arm64\native\msalruntime_arm64.
 G:\PTPMQL\DemoMVC\bin\Debug\net10.0\runtimes\win-x64\native\msalruntime.dll
 G:\PTPMQL\DemoMVC\bin\Debug\net10.0\runtimes\win-x86\native\msalruntime_x86.dll
 G:\PTPMQL\DemoMVC\obj\Debug\net10.0\DemoMVC.csproj.Up2Date
+G:\PTPMQL\DemoMVC\bin\Debug\net10.0\ExcelDataReader.dll
+G:\PTPMQL\DemoMVC\bin\Debug\net10.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+G:\PTPMQL\DemoMVC\obj\Debug\net10.0\compressed\hpj4wuo2m1-{0}-1573cmtqut-1573cmtqut.gz
+G:\PTPMQL\DemoMVC\bin\Debug\net10.0\System.Security.Cryptography.Pkcs.dll
+G:\PTPMQL\DemoMVC\bin\Debug\net10.0\runtimes\win\lib\net10.0\System.Security.Cryptography.Pkcs.dll
